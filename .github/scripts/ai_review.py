@@ -7,7 +7,9 @@ import os
 import subprocess
 import traceback
 
+import logging
 
+logger = logging.getLogger(__name__)
 
 MAX_DIFF_LENGTH = 15000
 
@@ -90,6 +92,7 @@ def review_with_gemini(prompt):
     try:
         from google import genai
         client = genai.Client(api_key=api_key)
+                              # base_url="https://soft-king-6154.huangpeng0430.workers.dev/v1/models/")
         response = client.models.generate_content(
             model=model,
             contents=prompt
@@ -99,12 +102,14 @@ def review_with_gemini(prompt):
     except ImportError as e:
         print(f"❌ Gemini 依赖未安装: {e}")
         print("   请确保安装了 google-genai: pip install google-genai")
+        logger.error("   请确保安装了 google-genai: pip install google-genai")
         return None
     except Exception as e:
         print(f"❌ Gemini 审查失败: {e}")
         # 打印更详细的错误信息
         import traceback
         traceback.print_exc()
+        logger.error(f"❌ Gemini 审查失败: {e}")
         return None
 
 
